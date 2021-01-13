@@ -4,10 +4,10 @@
       <chat-header/>
       <div class="flex-row">
         <div class="sidebar">
-          <chat-list/>
+          <chat-list @select="setChat"/>
         </div>
         <div class="main">
-          <chat/>
+          <chat :chat="chat"/>
         </div>
       </div>
     </section>
@@ -31,6 +31,23 @@ export default {
     ChatList,
     Chat,
   },
+  data(){
+    return {
+      chat: []
+    }
+  },
+  methods: {
+    setChat(id) {
+      let xhr = new XMLHttpRequest()
+      xhr.open('GET', 'https://orlov.tech/test.php?type=text&id=' + id)
+      xhr.send()
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          this.chat = JSON.parse(xhr.responseText)
+        }
+      }
+    },
+  }
 }
 </script>
 
@@ -83,11 +100,11 @@ html, body
     display: none
 
 .sidebar
-  width: 20.8%
+  width: 350px
   border-right: 1px solid #333333
 
 .main
-  width: 79.2%
+  width: 100%
 
 .flex-row
   display: flex

@@ -1,7 +1,7 @@
 <template>
   <div class="chat-list">
     <div class="chat-header">Чаты</div>
-    <div class="chat-item" v-for="(item, index) in items" :key="index">
+    <div class="chat-item" @click="selectChat(index)" v-for="(item, index) in items" :key="index">
       <div class="chat-item__title">
         <span class="text">{{ item.name }}</span><span class="time">{{ item.time }}</span>
       </div>
@@ -22,30 +22,29 @@
 <script>
 export default {
   name: 'ChatList',
-  data()
-  {
+  data() {
     return {
-      items: [
-        {
-          name: 'Первый чат',
-          time: '09:45',
-          isRead: false,
-          text: 'Мой первый текст в этом чате и я очень доволен что он у меня получился и теперь люди есть, Мой первый текст в этом чате и я очень доволен что он у меня получился и теперь люди есть',
-        },
-        {
-          name: 'Второй чат и это очень красивый чат тратата',
-          time: '09:45',
-          isRead: true,
-          text: 'Мой первый текст в этом чате и я очень доволен что он у меня получился и теперь люди есть',
-        },
-        {
-          name: 'Третий чат',
-          time: '09:45',
-          isRead: false,
-          text: 'Мой первый текст в этом чате и я очень доволен что он у меня получился и теперь люди есть',
-        },
-      ],
+      items: [],
     }
+  },
+  created() {
+    this.send()
+  },
+  methods: {
+    selectChat(index) {
+      this.items[index].isRead = true
+      this.$emit('select', index)
+    },
+    send() {
+      let xhr = new XMLHttpRequest()
+      xhr.open('GET', 'https://orlov.tech/test.php?type=chat')
+      xhr.send()
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          this.items = JSON.parse(xhr.responseText)
+        }
+      }
+    },
   },
 }
 </script>
@@ -89,10 +88,12 @@ export default {
     width: 20px
     height: 10px
     display: inline-block
+    svg
+      fill: #3399ff
 
     &.active
       svg
-        fill: #3399ff
+        fill: #000
 
   &__body
     overflow: hidden
